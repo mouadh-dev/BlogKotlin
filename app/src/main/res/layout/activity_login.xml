@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    tools:context=".Activity.login">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="10sp"
+        android:orientation="vertical">
+<TextView
+    android:id="@+id/loginText"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:text="Login"
+    android:textColor="@color/black"
+    android:textSize="50sp"
+    android:layout_gravity="center"
+    />
+
+    <EditText
+        android:id="@+id/loginMail"
+        android:layout_width="300dp"
+        android:layout_height="60dp"
+        android:hint="Enter mail here"
+        android:textColorHint="#888282"
+        android:textSize="15sp"
+        />
+        <EditText
+            android:id="@+id/loginPassword"
+            android:layout_width="300dp"
+            android:layout_height="60dp"
+            android:hint="************"
+            android:textColorHint="#888282"
+            android:textSize="15sp"
+            />
+    </LinearLayout>
+
+
+
+</FrameLayout>

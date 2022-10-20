@@ -1,6 +1,6 @@
-package com.example.blog.Dao
+package com.example.Blog.Dao
 
-import com.example.blog.Entity.UserItem
+import com.example.Blog.Entity.UserItem
 
 interface UserCallback {
     fun onSuccess(userItem: UserItem)

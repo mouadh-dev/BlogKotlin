@@ -1,4 +1,4 @@
-package com.example.blog.Dao
+package com.example.Blog.Dao
 
 interface SignUpCallback {
     fun success()

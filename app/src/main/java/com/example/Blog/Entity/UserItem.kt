@@ -1,20 +1,20 @@
-package com.example.blog.Entity
+package com.example.Blog.Entity
 
 import android.os.Parcel
 import android.os.Parcelable
 
-data class UserItem constructor(
+data class UserItem(
     var fullname: String? = "",
-    var mail: String? = "",
-    var password: String? = "",
+    var mail: String = "",
+    var password: String = "",
     var confirmpassword: String? = "",
     var id: String? = "",
     var profilePhoto: String? = null,
 ): Parcelable{
     constructor(parcel: Parcel) : this(
         parcel.readString(),
-        parcel.readString(),
-        parcel.readString(),
+        parcel.readString().toString(),
+        parcel.readString().toString(),
         parcel.readString(),
         parcel.readString(),
         parcel.readString()

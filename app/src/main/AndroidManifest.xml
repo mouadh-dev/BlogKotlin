@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.blog">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.example.Blog">
 
     <application
         android:allowBackup="true"
@@ -10,20 +11,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Blog">
         <activity
-            android:name=".Activity.login"
-            android:exported="false"
-            android:label="@string/title_activity_login"
-            android:theme="@style/Theme.Blog.NoActionBar" />
+            android:name="com.example.Blog.Activity.Home"
+            android:exported="false" />
+
         <activity
-            android:name=".Activity.Activity_Auth"
-            android:exported="false"
-            android:label="@string/title_activity_auth"
-            android:theme="@style/Theme.Blog.NoActionBar" />
-        <activity
-            android:name=".MainActivity"
+            android:name="com.example.Blog.Activity.ActivityAuth"
             android:exported="true"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.Blog.NoActionBar">
+            android:label="@string/title_activity_auth"
+            android:theme="@style/Theme.Blog.NoActionBar"
+            tools:ignore="Instantiatable">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

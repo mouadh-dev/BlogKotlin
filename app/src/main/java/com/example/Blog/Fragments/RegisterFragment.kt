@@ -15,6 +15,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
 import androidx.fragment.app.Fragment
+import com.example.Blog.Dao.SignUpCallback
 import com.example.Blog.Dao.UserDao
 import com.example.Blog.Entity.UserItem
 import com.example.Blog.R
@@ -61,8 +62,8 @@ class RegisterFragment : Fragment() {
         mail = binding.mailUserInscription
         password = binding.PasswordUserInscription
         confirmPassword = binding.InscriptionConfirmPassword
-        val userDao = UserDao()
-         val user = UserItem()
+
+
 
         binding.registerPicture.setOnClickListener {
             println(Log.ASSERT,"selected","showing selected photo")
@@ -71,20 +72,6 @@ class RegisterFragment : Fragment() {
             startActivityForResult(intent, 0    )
         }
 
-        binding.signUpButton.setOnClickListener {
-            if (validateInput()) {
-                user.fullname = fullName!!.text.toString()
-                user.mail = mail!!.text.toString()
-                user.password = password!!.text.toString()
-                user.confirmpassword = confirmPassword!!.text.toString()
-                println(Log.ASSERT, "mouadh", user.toString())
-                val loginFragment = LoginFragment()
-                requireFragmentManager().beginTransaction()
-                    .replace(R.id.frameLayout, loginFragment).commit()
-            } else {
-                println(Log.ASSERT, "error", "error")
-            }
-        }
 
     }
 
@@ -98,6 +85,35 @@ class RegisterFragment : Fragment() {
         val picture = MediaStore.Images.Media.getBitmap(resolver,uri)
         val pictureDrawable = BitmapDrawable(picture)
         binding.registerPicture.setBackgroundDrawable(pictureDrawable)
+
+        /////sign up function
+        val userDao = UserDao()
+        val user = UserItem()
+        binding.signUpButton.setOnClickListener {
+            if (validateInput()) {
+                user.fullname = fullName!!.text.toString()
+                user.mail = mail!!.text.toString()
+                user.password = password!!.text.toString()
+                user.confirmpassword = confirmPassword!!.text.toString()
+                user.profilePhoto = uri.toString()
+                println(Log.ASSERT, "mouadh", user.toString())
+                val loginFragment = LoginFragment()
+                userDao.signUpUser(requireActivity(),user,object:SignUpCallback{
+                    override fun success() {
+                        requireFragmentManager().beginTransaction()
+                            .replace(R.id.frameLayout, loginFragment).commit()
+                    }
+                    override fun failure(error: String) {
+
+                    }
+                })
+
+
+            } else {
+                println(Log.ASSERT, "error", "error")
+            }
+        }
+
     }
 
     private fun isEmailValid(email: String): Boolean {

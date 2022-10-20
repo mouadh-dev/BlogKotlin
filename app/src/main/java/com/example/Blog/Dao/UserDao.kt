@@ -1,11 +1,14 @@
 package com.example.Blog.Dao
 
 import android.app.Activity
+import android.net.Uri
 import android.util.Log
 import com.example.Blog.Entity.UserItem
 import com.example.Blog.Util.BaseConstant
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.storage.FirebaseStorage
+import java.util.*
 
 
 class UserDao: GestionUser {
@@ -14,6 +17,7 @@ class UserDao: GestionUser {
     private val mAuth = FirebaseAuth.getInstance()
     private val userRef = FirebaseDatabase.getInstance().getReference("users")
     private val publicationRef = FirebaseDatabase.getInstance().getReference("Post")
+    private val storageReference = FirebaseStorage.getInstance().reference
 
 ///////////////////////////////////////insert user////////////////////////////////
     override fun insertUser(userItem: UserItem) {
@@ -47,4 +51,17 @@ class UserDao: GestionUser {
                        // ...
                    }
            }
+    //////////////////////////////////upload picture//////////////////////////////////////
+    fun uploadImageToFirebase(contentUri: Uri) {
+        val fileName = UUID.randomUUID().toString() + ".jpg"
+        val image = storageReference.child("pictures/$fileName")
+        image.putFile(contentUri).addOnSuccessListener {
+            image.downloadUrl.addOnSuccessListener { uri ->
+                Log.d("tag", "onSuccess: Uploaded Image URl is $uri")
+            }.addOnFailureListener {
+                Log.d("tag", "onFailureMessage is $it")
+            }
+        }
+    }
+
        }

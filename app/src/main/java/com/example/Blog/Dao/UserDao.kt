@@ -1,9 +1,10 @@
 package com.example.Blog.Dao
 
-import androidx.appcompat.app.AppCompatActivity
 import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
+import androidx.appcompat.app.AppCompatActivity
+import com.example.Blog.Entity.PostItem
 import com.example.Blog.Entity.UserItem
 import com.example.Blog.Util.BaseConstant
 import com.google.firebase.auth.FirebaseAuth
@@ -12,6 +13,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import java.util.*
 
 
@@ -23,12 +25,15 @@ class UserDao: GestionUser {
     private val publicationRef = FirebaseDatabase.getInstance().getReference("Post")
     private val storageReference = FirebaseStorage.getInstance().reference
 
+
 ///////////////////////////////////////insert user////////////////////////////////
     override fun insertUser(userItem: UserItem) {
         userItem.id = myRef.push().key.toString()
         myRef.child(userItem.id!!).setValue(userItem)
     }
-
+    fun getCurrentUserId():String{
+        return  FirebaseAuth.getInstance().uid.toString()
+    }
    ////////////////////////////////////sign up////////////////////////////////////////////:
    fun signUpUser(activity: AppCompatActivity, userItem: UserItem, signUpCallback: SignUpCallback) {
        mAuth.createUserWithEmailAndPassword(userItem.mail,userItem.password)
@@ -61,9 +66,9 @@ class UserDao: GestionUser {
         val image = storageReference.child("pictures/$fileName")
         image.putFile(contentUri).addOnSuccessListener {
             image.downloadUrl.addOnSuccessListener { uri ->
-                Log.d("tag", "onSuccess: Uploaded Image URl is $uri")
+                Log.d("upload picture", "onSuccess: Uploaded Image URl is $uri")
             }.addOnFailureListener {
-                Log.d("tag", "onFailureMessage is $it")
+                Log.d("upload picture", "onFailureMessage is $it")
             }
         }
     }
@@ -106,6 +111,12 @@ class UserDao: GestionUser {
             }
 
         })
+    }
+    ///////////////////////////////////////////Post send and get////////////////////////////////////////
+    fun sendPost(post: PostItem) {
+        post.id = publicationRef.child(post.idUser!!).push().key.toString()
+        publicationRef.child(post.idUser!!).child(post.id!!).setValue(post)
+
     }
 
 }

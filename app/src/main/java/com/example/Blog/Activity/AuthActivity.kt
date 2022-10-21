@@ -4,7 +4,6 @@ import android.os.Bundle
 
 import androidx.appcompat.app.AppCompatActivity
 import com.example.Blog.Fragments.LoginFragment
-import com.example.Blog.Fragments.RegisterFragment
 import com.example.Blog.R
 import com.example.Blog.databinding.ActivityAuthBinding
 

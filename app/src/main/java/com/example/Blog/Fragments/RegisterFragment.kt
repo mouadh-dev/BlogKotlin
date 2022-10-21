@@ -1,7 +1,6 @@
 package com.example.Blog.Fragments
 
 import androidx.appcompat.app.AppCompatActivity
-import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
@@ -25,7 +24,6 @@ import com.example.Blog.databinding.FragmentRegisterBinding.inflate
 
 class RegisterFragment : Fragment() {
 
-    private var mContext: Context? = null
     private lateinit var binding: FragmentRegisterBinding
     private var fullName: EditText? = null
     private var mail: EditText? = null
@@ -62,6 +60,7 @@ class RegisterFragment : Fragment() {
         mail = binding.mailUserInscription
         password = binding.PasswordUserInscription
         confirmPassword = binding.InscriptionConfirmPassword
+        val userDao = UserDao()
 
 
         binding.backToLogin.setOnClickListener {

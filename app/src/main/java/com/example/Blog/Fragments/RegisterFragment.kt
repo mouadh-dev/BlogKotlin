@@ -1,6 +1,6 @@
 package com.example.Blog.Fragments
 
-import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
 import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
@@ -77,7 +77,7 @@ class RegisterFragment : Fragment() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 0 && resultCode == Activity.RESULT_OK && data != null){
+        if (requestCode == 0 && resultCode == AppCompatActivity.RESULT_OK && data != null){
             Log.d("Register activity", "Photo was selected successfully")
         }
         uri = data!!.data
@@ -98,7 +98,7 @@ class RegisterFragment : Fragment() {
                 user.profilePhoto = uri.toString()
                 println(Log.ASSERT, "mouadh", user.toString())
                 val loginFragment = LoginFragment()
-                userDao.signUpUser(requireActivity(),user,object:SignUpCallback{
+                userDao.signUpUser(requireActivity() as AppCompatActivity,user,object:SignUpCallback{
                     override fun success() {
                         requireFragmentManager().beginTransaction()
                             .replace(R.id.frameLayout, loginFragment).commit()

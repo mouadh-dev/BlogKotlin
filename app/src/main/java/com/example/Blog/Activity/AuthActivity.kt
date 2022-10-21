@@ -8,7 +8,7 @@ import com.example.Blog.Fragments.RegisterFragment
 import com.example.Blog.R
 import com.example.Blog.databinding.ActivityAuthBinding
 
-class ActivityAuth : AppCompatActivity() {
+class AuthActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAuthBinding
 

@@ -1,12 +1,16 @@
 package com.example.Blog.Dao
 
-import android.app.Activity
+import androidx.appcompat.app.AppCompatActivity
+import android.content.ContentValues.TAG
 import android.net.Uri
 import android.util.Log
 import com.example.Blog.Entity.UserItem
 import com.example.Blog.Util.BaseConstant
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
 import java.util.*
 
@@ -26,7 +30,7 @@ class UserDao: GestionUser {
     }
 
    ////////////////////////////////////sign up////////////////////////////////////////////:
-   fun signUpUser(activity: Activity, userItem: UserItem, signUpCallback: SignUpCallback) {
+   fun signUpUser(activity: AppCompatActivity, userItem: UserItem, signUpCallback: SignUpCallback) {
        mAuth.createUserWithEmailAndPassword(userItem.mail,userItem.password)
            .addOnCompleteListener(activity) { task ->
                        if (task.isSuccessful) {
@@ -63,5 +67,45 @@ class UserDao: GestionUser {
             }
         }
     }
+    ///////////////////////////////////////////Sign in//////////////////////////////////////////////////
+    fun signIn(activity: AppCompatActivity, userItem: UserItem, userCallback: UserCallback) {
+        mAuth.signInWithEmailAndPassword(userItem.mail, userItem.password)
+            .addOnCompleteListener(activity) { task ->
+                if (task.isSuccessful) {
 
-       }
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d(TAG, "signInWithEmail:success")
+                    val user = mAuth.currentUser
+                    var registredId = user!!.uid
+                    getUserByUid(registredId, userCallback)
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(TAG, "signInWithEmail:failure", task.exception)
+
+                    userCallback.failure()
+                }
+            }
+
+    }
+    ///////////////////////////////////////////////get user by id///////////////////////////////////////
+    fun getUserByUid(uid: String, responseCallback: UserCallback) {
+        var jLoginDatabase = database.reference.child("users").child(uid)
+        jLoginDatabase.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(dataSnapshot: DataSnapshot) {
+                var userItem = dataSnapshot.getValue(UserItem::class.java)
+                if (userItem != null) {
+                    responseCallback.onSuccess(userItem as UserItem)
+                }
+
+
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.w(TAG, "signInWithEmail:failure", error.toException())
+                responseCallback.failure()
+            }
+
+        })
+    }
+
+}

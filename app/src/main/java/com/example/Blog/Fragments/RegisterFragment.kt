@@ -64,6 +64,11 @@ class RegisterFragment : Fragment() {
         confirmPassword = binding.InscriptionConfirmPassword
 
 
+        binding.backToLogin.setOnClickListener {
+            val loginFragment = LoginFragment()
+            requireFragmentManager().beginTransaction()
+                .replace(R.id.frameLayout, loginFragment).commit()
+        }
 
         binding.registerPicture.setOnClickListener {
             println(Log.ASSERT,"selected","showing selected photo")

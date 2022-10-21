@@ -1,12 +1,16 @@
 buildscript {
-    ext.kotlin_version = '1.0.0-beta-3594'
+    ext {
+        compose_version = '1.1.0-beta02'
+        agp_version = '7.2.2'
+    }
+    //ext.kotlin_version = '1.0.0-beta-3594'
     repositories {
         mavenCentral()
         google()
     }
     dependencies {
         classpath 'com.google.gms:google-services:4.3.14'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        //classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.6.21"
         classpath "com.android.tools.build:gradle:4.1.3"
 

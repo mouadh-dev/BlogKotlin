@@ -5,7 +5,7 @@
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    tools:context=".Activity.login">
+    tools:context=".Fragments.LoginFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -27,6 +27,7 @@
             android:layout_width="300dp"
             android:layout_height="60dp"
             android:hint="Enter mail here"
+            android:inputType="textEmailAddress"
             android:textColorHint="#888282"
             android:textSize="15sp"
             />
@@ -37,6 +38,7 @@
             android:hint="************"
             android:textColorHint="#888282"
             android:textSize="15sp"
+            android:inputType="textPassword"
             />
         <TextView
             android:id="@+id/createAccountText"

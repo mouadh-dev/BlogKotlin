@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.example.Blog">
-
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -11,11 +11,13 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Blog">
         <activity
-            android:name="com.example.Blog.Activity.HomeActivity"
+            android:name=".Activity.ProfileActivity"
             android:exported="false" />
-
         <activity
-            android:name="com.example.Blog.Activity.AuthActivity"
+            android:name=".Activity.HomeActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Activity.AuthActivity"
             android:exported="true"
             android:label="@string/title_activity_auth"
             android:theme="@style/Theme.Blog.NoActionBar"

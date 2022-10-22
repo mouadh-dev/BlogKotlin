@@ -61,17 +61,20 @@ class UserDao: GestionUser {
                    }
            }
     //////////////////////////////////upload picture//////////////////////////////////////
-    fun uploadImageToFirebase(contentUri: Uri) {
+    fun uploadImageToFirebase(uid: String, contentUri: Uri) {
         val fileName = UUID.randomUUID().toString() + ".jpg"
         val image = storageReference.child("pictures/$fileName")
         image.putFile(contentUri).addOnSuccessListener {
             image.downloadUrl.addOnSuccessListener { uri ->
-                Log.d("upload picture", "onSuccess: Uploaded Image URl is $uri")
+                Log.d("tag", "onSuccess: Uploaded Image URl is $uri")
+                userRef.child(uid).child("profilPhotos").setValue(uri.toString())
+
             }.addOnFailureListener {
-                Log.d("upload picture", "onFailureMessage is $it")
+                Log.d("tag", "onFailureMessage is $it")
             }
         }
     }
+
     ///////////////////////////////////////////Sign in//////////////////////////////////////////////////
     fun signIn(activity: AppCompatActivity, userItem: UserItem, userCallback: UserCallback) {
         mAuth.signInWithEmailAndPassword(userItem.mail, userItem.password)
@@ -116,7 +119,20 @@ class UserDao: GestionUser {
     fun sendPost(post: PostItem) {
         post.id = publicationRef.child(post.idUser!!).push().key.toString()
         publicationRef.child(post.idUser!!).child(post.id!!).setValue(post)
+    }
+    /////////////////////////////////////////////updateUser/////////////////////////////////////////
+    fun updateUser(id: String, userItem: UserItem, userCallback: UserCallback) {
 
+        userRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                userRef.child(id).removeValue()
+                userRef.child(id).setValue(userItem)
+                userCallback.onSuccess(userItem)
+            }
+
+            override fun onCancelled(error: DatabaseError) {
+            }
+        })
     }
 
 }

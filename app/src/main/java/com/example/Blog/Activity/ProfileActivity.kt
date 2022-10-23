@@ -1,7 +1,5 @@
 package com.example.Blog.Activity
 
-import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
@@ -11,14 +9,10 @@ import android.provider.MediaStore
 import android.util.Log
 import android.util.Patterns
 import android.widget.EditText
-import android.widget.FrameLayout
 import com.bumptech.glide.Glide
-import com.example.Blog.Dao.SignUpCallback
 import com.example.Blog.Dao.UserCallback
 import com.example.Blog.Dao.UserDao
 import com.example.Blog.Entity.UserItem
-import com.example.Blog.Fragments.LoginFragment
-import com.example.Blog.R
 import com.example.Blog.databinding.ActivityProfileBinding
 
 class ProfileActivity : AppCompatActivity() {

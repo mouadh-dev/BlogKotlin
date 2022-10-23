@@ -13,8 +13,7 @@
         android:orientation="vertical">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50sp"
-        android:layout_weight="1"
+        android:layout_height="70sp"
         android:padding="10sp"
         android:orientation="vertical"
         android:layout_gravity="top"
@@ -25,13 +24,13 @@
             android:layout_gravity="right"
             android:layout_width="50sp"
             android:layout_height="50sp"
+
             />
     </LinearLayout>
 
    <LinearLayout
        android:layout_width="match_parent"
        android:layout_height="wrap_content"
-       android:layout_weight="9"
        android:padding="10sp"
        android:orientation="vertical"
        >
@@ -81,11 +80,22 @@
 
    </LinearLayout>
 
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        />
+
+        <RelativeLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent">
+
+            <!-- Note the 'centre in parent' tag below -->
+
+            <ListView
+                android:id="@+id/listPost"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+
+                android:gravity="center"
+                />
+
+        </RelativeLayout>
     </LinearLayout>
 
 

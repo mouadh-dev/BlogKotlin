@@ -1,5 +1,6 @@
 package com.example.Blog.Activity
 
+import android.content.Context
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
@@ -8,8 +9,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
+import android.view.View
 import android.widget.EditText
 import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.example.Blog.Adapters.PostAdapter
 import com.example.Blog.Dao.UserCallback
@@ -35,6 +38,8 @@ class HomeActivity : AppCompatActivity() {
     var listrev = ArrayList<PostItem>()
     var userDao = UserDao()
     private var post: PostItem? = null
+    private var uid:String? = null
+    private var mContext: Context? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
     val currentDateTime: LocalDateTime = LocalDateTime.now()
@@ -51,16 +56,26 @@ class HomeActivity : AppCompatActivity() {
 
     private fun initView() {
         contentPost = binding.contentPostEditText
+        uid = userDao.getCurrentUserId()
+        mContext = this
 
+        initAdapter()
+        ////////////////////////////////DIALOG///////////////////////////////
+        val v = View.inflate(mContext, R.layout.progress_dialog, null)
+        val builder = AlertDialog.Builder(mContext!!)
+        builder.setView(v)
 
-
-
+        val progressdialog = builder.create()
+        progressdialog.show()
+        progressdialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+        progressdialog.setCancelable(false)
         userDao.getPost(object : PostCallback {
-            override fun successPost(postItems: ArrayList<PostItem>) {
-
-                listPostArray = postItems
+            override fun successPost(listPosts: ArrayList<PostItem>) {
+//val sortedList:ArrayList<PostItem> = listPosts.sortByDescending{it.hourPPost} as ArrayList<PostItem>
+                progressdialog.dismiss()
+                listPostArray = listPosts
                 adapterPost!!.notifyDataSetChanged()
-
+                initAdapter()
             }
 
             override fun failurePost(error: DatabaseError) {
@@ -68,7 +83,7 @@ class HomeActivity : AppCompatActivity() {
             }
 
         })
-        initAdapter()
+
         binding.imageButton.setOnClickListener {
             Log.println(Log.ASSERT, "selected", "showing selected photo")
             val intent = Intent(Intent.ACTION_PICK)
@@ -77,12 +92,6 @@ class HomeActivity : AppCompatActivity() {
         }
 
         val uid = userDao.getCurrentUserId()
-
-
-
-
-
-
         userDao.getUserByUid(uid, object : UserCallback {
             override fun onSuccess(userItem: UserItem) {
 
@@ -92,8 +101,10 @@ class HomeActivity : AppCompatActivity() {
 
             }
 
-            override fun failure() {
+            override fun failure(error: String) {
             }
+
+
         })
 
         binding.profilePhotoIV.setOnClickListener {
@@ -138,8 +149,11 @@ class HomeActivity : AppCompatActivity() {
 
             }
 
-            override fun failure() {
+            override fun failure(error: String) {
+
             }
+
+
         })
 
         binding.postButton.setOnClickListener {
@@ -155,6 +169,7 @@ class HomeActivity : AppCompatActivity() {
 
                 contentPost!!.text.clear()
                 binding.imageButton.background = resources.getDrawable(R.drawable.upload)
+
                 userDao.sendPost(post!!)
             }
 

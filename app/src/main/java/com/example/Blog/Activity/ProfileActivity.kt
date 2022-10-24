@@ -14,6 +14,7 @@ import com.example.Blog.Dao.UserCallback
 import com.example.Blog.Dao.UserDao
 import com.example.Blog.Entity.UserItem
 import com.example.Blog.databinding.ActivityProfileBinding
+import com.squareup.picasso.Picasso
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -47,19 +48,12 @@ class ProfileActivity : AppCompatActivity() {
         confirmPassword = binding.updateProfileConfirmPassword
         uid = userDao.getCurrentUserId()
 
-
-
-        val uid = userDao.getCurrentUserId()
-
-
-
-        userDao.getUserByUid(uid, object : UserCallback {
+        userDao.getUserByUid(uid!!, object : UserCallback {
             override fun onSuccess(userItem: UserItem) {
                 name!!.setText(userItem.fullname)
                 mail!!.setText(userItem.mail)
                 Log.println(Log.ASSERT, "picture", userItem.profilePhoto!!)
-                Glide.with(this@ProfileActivity)
-                    .load(userItem.profilePhoto)
+                Glide.with(this@ProfileActivity).load(userItem.profilePhoto)
                     .into(binding.updateProfilePicture)
                 passwordText = userItem.password
             }
@@ -87,18 +81,17 @@ class ProfileActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
+        val resolver = applicationContext.contentResolver
         if (requestCode == 0 && resultCode == AppCompatActivity.RESULT_OK && data != null) {
             Log.d("Register activity", "Photo was selected successfully")
             uri = data.data
-            val resolver = applicationContext.contentResolver
+
             val picture = MediaStore.Images.Media.getBitmap(resolver, uri)
             val pictureDrawable = BitmapDrawable(picture)
 
             binding.updateProfilePicture.setBackgroundDrawable(pictureDrawable)
         }
-        val userDao = UserDao()
         val uid = userDao.getCurrentUserId()
-        val resolver = applicationContext.contentResolver
         val user = UserItem()
         binding.updateProfileButton.setOnClickListener {
             if (validateInput()) {

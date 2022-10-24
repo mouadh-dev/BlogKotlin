@@ -1,5 +1,7 @@
 package com.example.Blog.Fragments
 
+import android.app.Activity
+import android.app.Dialog
 import androidx.appcompat.app.AppCompatActivity
 import android.content.Intent
 import android.graphics.drawable.BitmapDrawable
@@ -20,6 +22,9 @@ import com.example.Blog.Entity.UserItem
 import com.example.Blog.R
 import com.example.Blog.databinding.FragmentRegisterBinding
 import com.example.Blog.databinding.FragmentRegisterBinding.inflate
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import android.content.Context
 
 
 class RegisterFragment : Fragment() {
@@ -30,6 +35,7 @@ class RegisterFragment : Fragment() {
     private var password: EditText? = null
     private var confirmPassword: EditText? = null
     private var uri: Uri? = null
+    private var mContext: Context? = null
 
 
 
@@ -61,6 +67,7 @@ class RegisterFragment : Fragment() {
         password = binding.PasswordUserInscription
         confirmPassword = binding.InscriptionConfirmPassword
         val userDao = UserDao()
+        mContext = requireContext()
 
 
         binding.backToLogin.setOnClickListener {
@@ -83,12 +90,14 @@ class RegisterFragment : Fragment() {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 0 && resultCode == AppCompatActivity.RESULT_OK && data != null){
             Log.d("Register activity", "Photo was selected successfully")
+            uri = data.data
+            val resolver = requireActivity().contentResolver
+            val picture = MediaStore.Images.Media.getBitmap(resolver,uri)
+            val pictureDrawable = BitmapDrawable(picture)
+            binding.registerPicture.setBackgroundDrawable(pictureDrawable)
         }
-        uri = data!!.data
-        val resolver = requireActivity().contentResolver
-        val picture = MediaStore.Images.Media.getBitmap(resolver,uri)
-        val pictureDrawable = BitmapDrawable(picture)
-        binding.registerPicture.setBackgroundDrawable(pictureDrawable)
+
+
 
         /////sign up function
         val userDao = UserDao()
@@ -100,23 +109,40 @@ class RegisterFragment : Fragment() {
                 user.password = password!!.text.toString()
                 user.confirmpassword = confirmPassword!!.text.toString()
                 user.profilePhoto = uri.toString()
-                println(Log.ASSERT, "mouadh", user.toString())
+                ////////////////////////////////DIALOG///////////////////////////////
+                val v = View.inflate(mContext, R.layout.progress_dialog, null)
+                val builder = AlertDialog.Builder(mContext!!)
+                builder.setView(v)
+
+                val progressdialog = builder.create()
+                progressdialog.show()
+                progressdialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                progressdialog.setCancelable(false)
+
                 val loginFragment = LoginFragment()
                 userDao.signUpUser(requireActivity() as AppCompatActivity,user,object:SignUpCallback{
                     override fun success() {
+
+                        progressdialog.dismiss()
                         requireFragmentManager().beginTransaction()
                             .replace(R.id.frameLayout, loginFragment).commit()
                     }
                     override fun failure(error: String) {
+                        progressdialog!!.dismiss()
+                        val duration = Toast.LENGTH_SHORT
 
+                        val toast = Toast.makeText(context, "oops somthing went wrong!! please check your information", duration)
+                        toast.show()
                     }
                 })
 
 
-            } else {
-                println(Log.ASSERT, "error", "error")
             }
         }
+
+    }
+
+    private fun dialog() {
 
     }
 

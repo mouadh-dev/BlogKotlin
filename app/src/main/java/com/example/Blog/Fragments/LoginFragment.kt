@@ -1,5 +1,6 @@
 package com.example.Blog.Fragments
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Patterns
@@ -8,6 +9,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.Blog.Activity.HomeActivity
 import com.example.Blog.Dao.UserCallback
@@ -22,6 +25,7 @@ class LoginFragment : Fragment() {
     private lateinit var binding: FragmentLoginBinding
     private var mail: EditText? = null
     private var password: EditText? = null
+    private var mContext: Context? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -43,10 +47,20 @@ class LoginFragment : Fragment() {
     private fun initView() {
         mail = binding.loginMail
         password = binding.loginPassword
+        mContext = requireContext()
         var userDao = UserDao()
 
         binding.loginButton.setOnClickListener {
             if (validateInput()) {
+                ////////////////////////////////DIALOG///////////////////////////////
+                val v = View.inflate(mContext, R.layout.progress_dialog, null)
+                val builder = AlertDialog.Builder(mContext!!)
+                builder.setView(v)
+
+                val progressdialog = builder.create()
+                progressdialog.show()
+                progressdialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
+                progressdialog.setCancelable(false)
                 userDao.signIn(
                     requireActivity() as AppCompatActivity,
                     UserItem(
@@ -55,7 +69,7 @@ class LoginFragment : Fragment() {
                     ),
                     object : UserCallback {
                         override fun onSuccess(userItem: UserItem) {
-
+                            progressdialog.dismiss()
                             requireActivity().run {
                                 startActivity(
                                     Intent(this, HomeActivity::class.java)
@@ -64,8 +78,11 @@ class LoginFragment : Fragment() {
                             }
                         }
 
-                        override fun failure() {
-
+                        override fun failure(error: String) {
+                            val duration = Toast.LENGTH_SHORT
+                            progressdialog.dismiss()
+                            val toast = Toast.makeText(context, "oops somthing went wrong!! please check your information", duration)
+                            toast.show()
                         }
                     })
             }

@@ -58,7 +58,7 @@ class UserDao : GestionUser {
                         "createUserWithEmail:failure",
                         task.exception
                     )
-                    signUpCallback.failure(task.exception.toString())
+                    signUpCallback.failure(task.exception.toString().substring(65))
 
                 }
 
@@ -96,7 +96,7 @@ class UserDao : GestionUser {
                     // If sign in fails, display a message to the user.
                     Log.w(TAG, "signInWithEmail:failure", task.exception)
 
-                    userCallback.failure()
+                    userCallback.failure(task.exception.toString().substring(59))
                 }
             }
 
@@ -117,7 +117,7 @@ class UserDao : GestionUser {
 
             override fun onCancelled(error: DatabaseError) {
                 Log.w(TAG, "signInWithEmail:failure", error.toException())
-                responseCallback.failure()
+                responseCallback.failure(error.toException().toString())
             }
 
         })

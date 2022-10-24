@@ -4,5 +4,5 @@ import com.example.Blog.Entity.UserItem
 
 interface UserCallback {
     fun onSuccess(userItem: UserItem)
-    fun failure()
+    fun failure(error:String)
 }

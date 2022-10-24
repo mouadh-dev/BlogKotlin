@@ -1,7 +1,7 @@
 package com.example.Blog.Adapters
 
+import android.R.attr.data
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +15,8 @@ import com.example.Blog.Entity.PostItem
 import com.example.Blog.Entity.UserItem
 import com.example.Blog.R
 
-class PostAdapter(var mCtx: Context, var resources: Int, var items: List<PostItem>) :
+
+class PostAdapter(var mCtx: Context, var resources: Int, var items: ArrayList<PostItem>) :
     ArrayAdapter<PostItem>(mCtx, resources, items) {
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
@@ -36,15 +37,35 @@ class PostAdapter(var mCtx: Context, var resources: Int, var items: List<PostIte
         var hourPostpatient: TextView = view.findViewById(R.id.timePost)
         var datePostpatient: TextView = view.findViewById(R.id.datePost)
 
+        fillAdapter(userDao,userPicture,ownerPost,contentPost,picturePost,hourPostpatient,datePostpatient,position)
+
+
+
+
+    }
+
+    private fun fillAdapter(
+        userDao: UserDao,
+        userPicture: ImageView,
+        ownerPost: TextView,
+        contentPost: TextView,
+        picturePost: ImageView,
+        hourPostpatient: TextView,
+        datePostpatient: TextView,
+        position: Int
+    ) {
         var mItem: PostItem = items[position]
 
         datePostpatient.text = mItem.datePost
         hourPostpatient.text = mItem.hourPPost!!.substring(0, 5)
         contentPost.text = mItem.contentPost
+if (mItem.picturePost.toString() != "null"){
+    picturePost.visibility = View.VISIBLE
+    Glide.with(mCtx)
+        .load(mItem.picturePost)
+        .into(picturePost)
+}
 
-        Glide.with(mCtx)
-            .load(mItem.picturePost)
-            .into(picturePost)
         userDao.getUserByUid(mItem.idUser!!, object : UserCallback {
             override fun onSuccess(userItem: UserItem) {
                 ownerPost.text = userItem.fullname
@@ -58,7 +79,7 @@ class PostAdapter(var mCtx: Context, var resources: Int, var items: List<PostIte
             }
 
         })
-
-
     }
+
+
 }

@@ -54,7 +54,9 @@ class ProfileActivity : AppCompatActivity() {
                 name!!.setText(userItem.fullname)
                 mail!!.setText(userItem.mail)
                 Log.println(Log.ASSERT, "picture", userItem.profilePhoto!!)
-                Glide.with(this@ProfileActivity).load(userItem.profilePhoto).into(binding.updateProfilePicture)
+                Glide.with(this@ProfileActivity)
+                    .load(userItem.profilePhoto)
+                    .into(binding.updateProfilePicture)
                 passwordText = userItem.password
             }
 
@@ -92,10 +94,10 @@ class ProfileActivity : AppCompatActivity() {
                 user.fullname = name!!.text.toString()
                 user.mail = mail!!.text.toString()
                 user.id = uid
-                if (password!!.text.toString() == "" && confirmPassword!!.text.toString() == ""){
+                if (password!!.text.toString() == "" && confirmPassword!!.text.toString() == "") {
                     user.password = passwordText.toString()
                     user.confirmpassword = passwordText.toString()
-                }else{
+                } else {
                     user.password = password!!.text.toString()
                     user.confirmpassword = confirmPassword!!.text.toString()
                 }
@@ -106,6 +108,7 @@ class ProfileActivity : AppCompatActivity() {
                         Log.println(Log.ASSERT, "mouadh", user.toString())
                         finish()
                     }
+
                     override fun failure() {
                     }
                 })

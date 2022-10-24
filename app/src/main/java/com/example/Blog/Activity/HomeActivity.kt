@@ -9,7 +9,6 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
 import android.widget.EditText
-import android.widget.ListView
 import androidx.annotation.RequiresApi
 import com.bumptech.glide.Glide
 import com.example.Blog.Adapters.PostAdapter
@@ -20,9 +19,10 @@ import com.example.Blog.Entity.UserItem
 import com.example.Blog.R
 import com.example.Blog.databinding.ActivityHomeBinding
 import com.example.stagepfe.Dao.PostCallback
+import com.google.firebase.database.DatabaseError
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
-import java.util.*
+import kotlin.collections.ArrayList
 
 
 class HomeActivity : AppCompatActivity() {
@@ -30,11 +30,12 @@ class HomeActivity : AppCompatActivity() {
     private lateinit var binding: ActivityHomeBinding
     private var uri: Uri? = null
     private var contentPost: EditText? = null
-    private var adapterPost : PostAdapter? = null
-    private var listViewPost: ListView? = null
+    private var adapterPost: PostAdapter? = null
     var listPostArray = ArrayList<PostItem>()
+    var listrev = ArrayList<PostItem>()
     var userDao = UserDao()
-    private var post:PostItem? =  null
+    private var post: PostItem? = null
+
     @RequiresApi(Build.VERSION_CODES.O)
     val currentDateTime: LocalDateTime = LocalDateTime.now()
 
@@ -51,22 +52,22 @@ class HomeActivity : AppCompatActivity() {
     private fun initView() {
         contentPost = binding.contentPostEditText
 
-        var listViewPost = binding.listPost
-        initAdapter()
 
-        adapterPost!!.clear()
+
+
         userDao.getPost(object : PostCallback {
-            override fun successPost(postItem: PostItem) {
+            override fun successPost(postItems: ArrayList<PostItem>) {
 
-                listPostArray.add(postItem)
+                listPostArray = postItems
                 adapterPost!!.notifyDataSetChanged()
+                initAdapter()
+            }
+
+            override fun failurePost(error: DatabaseError) {
 
             }
 
-            override fun failurePost() {
-            }
         })
-
 
         binding.imageButton.setOnClickListener {
             Log.println(Log.ASSERT, "selected", "showing selected photo")
@@ -86,7 +87,8 @@ class HomeActivity : AppCompatActivity() {
             override fun onSuccess(userItem: UserItem) {
 
                 Log.println(Log.ASSERT, "picture", userItem.profilePhoto!!)
-                Glide.with(this@HomeActivity).load(userItem.profilePhoto).into(binding.profilePhotoIV)
+                Glide.with(this@HomeActivity).load(userItem.profilePhoto)
+                    .into(binding.profilePhotoIV)
 
             }
 
@@ -103,8 +105,10 @@ class HomeActivity : AppCompatActivity() {
 
     private fun initAdapter() {
 
-        adapterPost = PostAdapter(this,R.layout.list_post,listPostArray)
+        adapterPost = PostAdapter(this, R.layout.list_post, listPostArray)
         binding.listPost.adapter = adapterPost
+
+
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -119,37 +123,50 @@ class HomeActivity : AppCompatActivity() {
         }
 
 
-
     }
+
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onResume() {
         val uid = userDao.getCurrentUserId()
-        userDao.getUserByUid(uid,object : UserCallback {
+        userDao.getUserByUid(uid, object : UserCallback {
             override fun onSuccess(userItem: UserItem) {
 
-                    Glide
-                        .with(this@HomeActivity)
-                        .load(userItem.profilePhoto)
-                        .into(binding.profilePhotoIV)
+                Glide
+                    .with(this@HomeActivity)
+                    .load(userItem.profilePhoto)
+                    .into(binding.profilePhotoIV)
 
             }
+
             override fun failure() {
             }
         })
 
         binding.postButton.setOnClickListener {
+            if (verified()) {
+                post!!.datePost = currentDateTime.format(DateTimeFormatter.ISO_DATE)
+                post!!.hourPPost = currentDateTime.format(DateTimeFormatter.ISO_TIME)
+                post!!.contentPost = contentPost!!.text.toString()
+                post!!.idUser = userDao.getCurrentUserId()
+                post!!.picturePost = uri.toString()
+                if (uri != null) {
+                    userDao.uploadImageToFirebase(userDao.getCurrentUserId().toString(), uri!!)
+                }
 
-            post!!.datePost = currentDateTime.format(DateTimeFormatter.ISO_DATE)
-            post!!.hourPPost = currentDateTime.format(DateTimeFormatter.ISO_TIME)
-            post!!.contentPost = contentPost!!.text.toString()
-            post!!.idUser = userDao.getCurrentUserId()
-            post!!.picturePost = uri.toString()
-            userDao.uploadImageToFirebase(userDao.getCurrentUserId().toString(), uri!!)
-            contentPost!!.text.clear()
-            binding.imageButton.background = resources.getDrawable(R.drawable.upload)
-            userDao.sendPost(post!!)
+                contentPost!!.text.clear()
+                binding.imageButton.background = resources.getDrawable(R.drawable.upload)
+                userDao.sendPost(post!!)
+            }
+
 
         }
         super.onResume()
+    }
+
+    private fun verified(): Boolean {
+        if (contentPost!!.text.toString() == "") {
+            return false
+        }
+        return true
     }
 }

@@ -138,19 +138,27 @@ class UserDao: GestionUser {
     fun getPost(postCallback: PostCallback) {
         postRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                val listPosts = ArrayList<PostItem>()
+                if (snapshot.exists()) {
 
                 snapshot.children.forEach { ds ->
+
                     ds!!.children.forEach { post ->
-                        val postItem = post.getValue(PostItem::class.java)
-                        postCallback.successPost(postItem!! as PostItem)
+
+                        val postItems=post.getValue(PostItem::class.java)
+                        listPosts.add(postItems!!)
+
+
                     }
                 }
-
+                    postCallback.successPost(listPosts)
+            }
             }
 
             override fun onCancelled(error: DatabaseError) {
-                postCallback.failurePost()
+                postCallback.failurePost(error)
             }
         })
     }
+
 }

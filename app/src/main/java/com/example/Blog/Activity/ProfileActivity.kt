@@ -24,6 +24,9 @@ class ProfileActivity : AppCompatActivity() {
     private var confirmPassword: EditText? = null
     private var passwordText: String? = null
     private var uri: Uri? = null
+    private var uid:String? = null
+    private val userDao = UserDao()
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -42,9 +45,10 @@ class ProfileActivity : AppCompatActivity() {
         mail = binding.mailUserUpdateProfile
         password = binding.PasswordUserUpdateProfile
         confirmPassword = binding.updateProfileConfirmPassword
+        uid = userDao.getCurrentUserId()
 
 
-        val userDao = UserDao()
+
         val uid = userDao.getCurrentUserId()
 
 
@@ -71,6 +75,13 @@ class ProfileActivity : AppCompatActivity() {
             startActivityForResult(intent, 0)
         }
 
+        ////////////////////////////////////////SIGNOUT///////////////////////////::
+        binding.signOut.setOnClickListener {
+                    userDao.signOut()
+                    val login = AuthActivity()
+                    val intent = Intent(this@ProfileActivity,login::class.java)
+                    startActivity(intent)
+        }
 
     }
 

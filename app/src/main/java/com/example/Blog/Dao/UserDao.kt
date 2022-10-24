@@ -18,7 +18,7 @@ import java.util.*
 import kotlin.collections.ArrayList
 
 
-class UserDao: GestionUser {
+class UserDao : GestionUser {
     private var database = FirebaseDatabase.getInstance()
     private val myRef = database.getReference(BaseConstant.instance().userRef)
     private val mAuth = FirebaseAuth.getInstance()
@@ -26,40 +26,46 @@ class UserDao: GestionUser {
     private val postRef = FirebaseDatabase.getInstance().getReference("Post")
     private val storageReference = FirebaseStorage.getInstance().reference
 
-///////////////////////////////////////insert user////////////////////////////////
+    ///////////////////////////////////////insert user////////////////////////////////
     override fun insertUser(userItem: UserItem) {
         userItem.id = myRef.push().key.toString()
         myRef.child(userItem.id!!).setValue(userItem)
     }
-    fun getCurrentUserId():String{
-        return  FirebaseAuth.getInstance().uid.toString()
+
+    fun getCurrentUserId(): String {
+        return FirebaseAuth.getInstance().uid.toString()
     }
-   ////////////////////////////////////sign up////////////////////////////////////////////:
-   fun signUpUser(activity: AppCompatActivity, userItem: UserItem, signUpCallback: SignUpCallback) {
-       mAuth.createUserWithEmailAndPassword(userItem.mail,userItem.password)
-           .addOnCompleteListener(activity) { task ->
-                       if (task.isSuccessful) {
-                           // Sign in success, update UI with the signed-in user's information
-                           Log.d("Auth activity", "createUserWithEmail:success")
-                           userItem.id = mAuth.currentUser!!.uid
-                           myRef.child(userItem.id!!).setValue(userItem)
-                           signUpCallback.success()
 
-                       }
-                       else {
-                           // If sign in fails, display a message to the user.
-                           Log.w(
-                               "Auth activity",
-                               "createUserWithEmail:failure",
-                               task.exception
-                           )
-                           signUpCallback.failure(task.exception.toString())
+    ////////////////////////////////////sign up////////////////////////////////////////////:
+    fun signUpUser(
+        activity: AppCompatActivity,
+        userItem: UserItem,
+        signUpCallback: SignUpCallback
+    ) {
+        mAuth.createUserWithEmailAndPassword(userItem.mail, userItem.password)
+            .addOnCompleteListener(activity) { task ->
+                if (task.isSuccessful) {
+                    // Sign in success, update UI with the signed-in user's information
+                    Log.d("Auth activity", "createUserWithEmail:success")
+                    userItem.id = mAuth.currentUser!!.uid
+                    myRef.child(userItem.id!!).setValue(userItem)
+                    signUpCallback.success()
 
-                       }
+                } else {
+                    // If sign in fails, display a message to the user.
+                    Log.w(
+                        "Auth activity",
+                        "createUserWithEmail:failure",
+                        task.exception
+                    )
+                    signUpCallback.failure(task.exception.toString())
 
-                       // ...
-                   }
-           }
+                }
+
+                // ...
+            }
+    }
+
     //////////////////////////////////upload picture//////////////////////////////////////
     fun uploadImageToFirebase(uid: String, contentUri: Uri) {
         val fileName = UUID.randomUUID().toString() + ".jpg"
@@ -95,6 +101,7 @@ class UserDao: GestionUser {
             }
 
     }
+
     ///////////////////////////////////////////////get user by id///////////////////////////////////////
     fun getUserByUid(uid: String, responseCallback: UserCallback) {
         val jLoginDatabase = database.reference.child("users").child(uid)
@@ -115,11 +122,13 @@ class UserDao: GestionUser {
 
         })
     }
+
     ///////////////////////////////////////////Post send and get////////////////////////////////////
     fun sendPost(post: PostItem) {
         post.id = postRef.child(post.idUser!!).push().key.toString()
         postRef.child(post.idUser!!).child(post.id!!).setValue(post)
     }
+
     /////////////////////////////////////////////updateUser/////////////////////////////////////////
     fun updateUser(id: String, userItem: UserItem, userCallback: UserCallback) {
 
@@ -134,31 +143,31 @@ class UserDao: GestionUser {
             }
         })
     }
+
     /////////////////////////////////////////////get Post/////////////////////////////////////////
     fun getPost(postCallback: PostCallback) {
         postRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val listPosts = ArrayList<PostItem>()
                 if (snapshot.exists()) {
-
-                snapshot.children.forEach { ds ->
-
-                    ds!!.children.forEach { post ->
-
-                        val postItems=post.getValue(PostItem::class.java)
-                        listPosts.add(postItems!!)
-
-
+                    snapshot.children.forEach { ds ->
+                        ds!!.children.forEach { post ->
+                            val postItems = post.getValue(PostItem::class.java)
+                            listPosts.add(postItems!!)
+                        }
                     }
-                }
                     postCallback.successPost(listPosts)
-            }
+                }
             }
 
             override fun onCancelled(error: DatabaseError) {
                 postCallback.failurePost(error)
             }
         })
+    }
+    //////////////////////////////////////////sign out methode////////////////////////////////////////
+    fun signOut() {
+        mAuth.signOut()
     }
 
 }

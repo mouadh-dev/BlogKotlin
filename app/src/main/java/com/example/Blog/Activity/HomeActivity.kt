@@ -60,7 +60,7 @@ class HomeActivity : AppCompatActivity() {
 
                 listPostArray = postItems
                 adapterPost!!.notifyDataSetChanged()
-                initAdapter()
+
             }
 
             override fun failurePost(error: DatabaseError) {
@@ -68,14 +68,14 @@ class HomeActivity : AppCompatActivity() {
             }
 
         })
-
+        initAdapter()
         binding.imageButton.setOnClickListener {
             Log.println(Log.ASSERT, "selected", "showing selected photo")
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
             startActivityForResult(intent, 0)
         }
-        val userDao = UserDao()
+
         val uid = userDao.getCurrentUserId()
 
 

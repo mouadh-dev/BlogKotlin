@@ -61,18 +61,11 @@ class HomeActivity : AppCompatActivity() {
 
         initAdapter()
         ////////////////////////////////DIALOG///////////////////////////////
-        val v = View.inflate(mContext, R.layout.progress_dialog, null)
-        val builder = AlertDialog.Builder(mContext!!)
-        builder.setView(v)
 
-        val progressdialog = builder.create()
-        progressdialog.show()
-        progressdialog.window?.setBackgroundDrawableResource(android.R.color.transparent)
-        progressdialog.setCancelable(false)
         userDao.getPost(object : PostCallback {
             override fun successPost(listPosts: ArrayList<PostItem>) {
 //val sortedList:ArrayList<PostItem> = listPosts.sortByDescending{it.hourPPost} as ArrayList<PostItem>
-                progressdialog.dismiss()
+
                 listPostArray = listPosts
                 adapterPost!!.notifyDataSetChanged()
                 initAdapter()
@@ -162,15 +155,15 @@ class HomeActivity : AppCompatActivity() {
                 post!!.hourPPost = currentDateTime.format(DateTimeFormatter.ISO_TIME)
                 post!!.contentPost = contentPost!!.text.toString()
                 post!!.idUser = userDao.getCurrentUserId()
-                post!!.picturePost = uri.toString()
-                if (uri != null) {
-                    userDao.uploadImageToFirebase(userDao.getCurrentUserId().toString(), uri!!)
-                }
+                //post!!.picturePost = uri.toString()
+                //if (uri != null) {
+                    //userDao.uploadImageToFirebase(userDao.getCurrentUserId().toString(), uri!!)
+               // }
 
                 contentPost!!.text.clear()
                 binding.imageButton.background = resources.getDrawable(R.drawable.upload)
 
-                userDao.sendPost(post!!)
+                userDao.sendPost(post!!,uri!!)
             }
 
 

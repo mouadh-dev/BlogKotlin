@@ -58,7 +58,7 @@ class ProfileActivity : AppCompatActivity() {
                 passwordText = userItem.password
             }
 
-            override fun failure() {
+            override fun failure(error: String) {
             }
         })
 
@@ -106,15 +106,19 @@ class ProfileActivity : AppCompatActivity() {
                     user.confirmpassword = confirmPassword!!.text.toString()
                 }
 
-                user.profilePhoto = uri.toString()
+                //user.profilePhoto = uri.toString()
                 userDao.updateUser(uid, user, object : UserCallback {
                     override fun onSuccess(userItem: UserItem) {
+                        userDao.uploadImageToFirebase(uid,uri!!)
                         Log.println(Log.ASSERT, "mouadh", user.toString())
                         finish()
                     }
 
-                    override fun failure() {
+                    override fun failure(error: String) {
+
                     }
+
+
                 })
 
 

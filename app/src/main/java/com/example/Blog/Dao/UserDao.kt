@@ -14,6 +14,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
+import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -49,6 +50,7 @@ class UserDao : GestionUser {
                     Log.d("Auth activity", "createUserWithEmail:success")
                     userItem.id = mAuth.currentUser!!.uid
                     myRef.child(userItem.id!!).setValue(userItem)
+
                     signUpCallback.success()
 
                 } else {
@@ -73,7 +75,7 @@ class UserDao : GestionUser {
         image.putFile(contentUri).addOnSuccessListener {
             image.downloadUrl.addOnSuccessListener { uri ->
                 Log.d("tag", "onSuccess: Uploaded Image URl is $uri")
-                userRef.child(uid).child("profilePhotos").setValue(uri.toString())
+                userRef.child(uid).child("profilePhoto").setValue(uri.toString())
 
             }.addOnFailureListener {
                 Log.d("tag", "onFailureMessage is $it")
@@ -124,9 +126,13 @@ class UserDao : GestionUser {
     }
 
     ///////////////////////////////////////////Post send and get////////////////////////////////////
-    fun sendPost(post: PostItem) {
+    fun sendPost(post: PostItem,contentUri:Uri) {
         post.id = postRef.child(post.idUser!!).push().key.toString()
         postRef.child(post.idUser!!).child(post.id!!).setValue(post)
+        if(contentUri != null){
+            uploadImagePostToFirebase(post.idUser!!,post.id!!,contentUri)
+        }
+
     }
 
     /////////////////////////////////////////////updateUser/////////////////////////////////////////
@@ -168,6 +174,22 @@ class UserDao : GestionUser {
     //////////////////////////////////////////sign out methode////////////////////////////////////////
     fun signOut() {
         mAuth.signOut()
+    }
+    ///////////
+    private fun uploadImagePostToFirebase(idUser: String,postId:String, contentUri: Uri)  {
+
+        val fileName = UUID.randomUUID().toString() + ".jpg"
+        val image = storageReference.child("posts/$fileName")
+        image.putFile(contentUri).addOnSuccessListener {
+            image.downloadUrl.addOnSuccessListener { uri ->
+                Log.d("tag", "onSuccess: Uploaded Image URl is $uri")
+                    postRef.child(idUser).child(postId).child("picturePost").setValue(uri.toString())
+
+
+            }.addOnFailureListener {
+                Log.d("tag", "onFailureMessage is $it")
+            }
+        }
     }
 
 }

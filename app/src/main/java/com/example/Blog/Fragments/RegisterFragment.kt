@@ -25,6 +25,7 @@ import com.example.Blog.databinding.FragmentRegisterBinding.inflate
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import android.content.Context
+import com.google.firebase.auth.FirebaseAuth
 
 
 class RegisterFragment : Fragment() {
@@ -36,6 +37,7 @@ class RegisterFragment : Fragment() {
     private var confirmPassword: EditText? = null
     private var uri: Uri? = null
     private var mContext: Context? = null
+    private val mAuth = FirebaseAuth.getInstance()
 
 
 
@@ -108,7 +110,9 @@ class RegisterFragment : Fragment() {
                 user.mail = mail!!.text.toString()
                 user.password = password!!.text.toString()
                 user.confirmpassword = confirmPassword!!.text.toString()
-                user.profilePhoto = uri.toString()
+                //user.profilePhoto = uri.toString()
+
+
                 ////////////////////////////////DIALOG///////////////////////////////
                 val v = View.inflate(mContext, R.layout.progress_dialog, null)
                 val builder = AlertDialog.Builder(mContext!!)
@@ -122,16 +126,16 @@ class RegisterFragment : Fragment() {
                 val loginFragment = LoginFragment()
                 userDao.signUpUser(requireActivity() as AppCompatActivity,user,object:SignUpCallback{
                     override fun success() {
-
+                        userDao.uploadImageToFirebase(mAuth.currentUser!!.uid,uri!!)
                         progressdialog.dismiss()
                         requireFragmentManager().beginTransaction()
                             .replace(R.id.frameLayout, loginFragment).commit()
                     }
                     override fun failure(error: String) {
-                        progressdialog!!.dismiss()
+                        progressdialog.dismiss()
                         val duration = Toast.LENGTH_SHORT
 
-                        val toast = Toast.makeText(context, "oops somthing went wrong!! please check your information", duration)
+                        val toast = Toast.makeText(context, "oops something went wrong!! please check your information", duration)
                         toast.show()
                     }
                 })

@@ -25,9 +25,8 @@ class ProfileActivity : AppCompatActivity() {
     private var confirmPassword: EditText? = null
     private var passwordText: String? = null
     private var uri: Uri? = null
-    private var uid:String? = null
+    private var uid: String? = null
     private val userDao = UserDao()
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,10 +70,10 @@ class ProfileActivity : AppCompatActivity() {
 
         ////////////////////////////////////////SIGNOUT///////////////////////////::
         binding.signOut.setOnClickListener {
-                    userDao.signOut()
-                    val login = AuthActivity()
-                    val intent = Intent(this@ProfileActivity,login::class.java)
-                    startActivity(intent)
+            userDao.signOut()
+            val login = AuthActivity()
+            val intent = Intent(this@ProfileActivity, login::class.java)
+            startActivity(intent)
         }
 
     }
@@ -106,10 +105,9 @@ class ProfileActivity : AppCompatActivity() {
                     user.confirmpassword = confirmPassword!!.text.toString()
                 }
 
-                //user.profilePhoto = uri.toString()
                 userDao.updateUser(uid, user, object : UserCallback {
                     override fun onSuccess(userItem: UserItem) {
-                        userDao.uploadImageToFirebase(uid,uri!!)
+                        userDao.uploadImageToFirebase(uid, uri!!)
                         Log.println(Log.ASSERT, "mouadh", user.toString())
                         finish()
                     }
@@ -117,8 +115,6 @@ class ProfileActivity : AppCompatActivity() {
                     override fun failure(error: String) {
 
                     }
-
-
                 })
 
 

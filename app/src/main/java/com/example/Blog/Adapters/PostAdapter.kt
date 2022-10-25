@@ -59,7 +59,7 @@ class PostAdapter(var mCtx: Context, var resources: Int, var items: ArrayList<Po
         datePostpatient.text = mItem.datePost
         hourPostpatient.text = mItem.hourPPost!!.substring(0, 5)
         contentPost.text = mItem.contentPost
-if (mItem.picturePost.toString() != "null"){
+if (mItem.picturePost.toString() != ""){
     picturePost.visibility = View.VISIBLE
     Glide.with(mCtx)
         .load(mItem.picturePost)
@@ -74,10 +74,9 @@ if (mItem.picturePost.toString() != "null"){
                     .into(userPicture)
             }
 
-            override fun failure() {
+            override fun failure(error: String) {
 
             }
-
         })
     }
 

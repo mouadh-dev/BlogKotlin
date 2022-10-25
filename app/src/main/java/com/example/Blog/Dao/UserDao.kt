@@ -14,7 +14,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.storage.FirebaseStorage
-import java.io.File
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -126,13 +125,11 @@ class UserDao : GestionUser {
     }
 
     ///////////////////////////////////////////Post send and get////////////////////////////////////
-    fun sendPost(post: PostItem,contentUri:Uri) {
+    fun sendPost(post: PostItem,  postCallback: PostCallback) {
+
         post.id = postRef.child(post.idUser!!).push().key.toString()
         postRef.child(post.idUser!!).child(post.id!!).setValue(post)
-        if(contentUri != null){
-            uploadImagePostToFirebase(post.idUser!!,post.id!!,contentUri)
-        }
-
+postCallback.pictureFound(post)
     }
 
     /////////////////////////////////////////////updateUser/////////////////////////////////////////
@@ -176,14 +173,17 @@ class UserDao : GestionUser {
         mAuth.signOut()
     }
     ///////////
-    private fun uploadImagePostToFirebase(idUser: String,postId:String, contentUri: Uri)  {
+     fun uploadImagePostToFirebase(idUser: String,postId:String, contentUri: Uri)  {
 
         val fileName = UUID.randomUUID().toString() + ".jpg"
         val image = storageReference.child("posts/$fileName")
         image.putFile(contentUri).addOnSuccessListener {
             image.downloadUrl.addOnSuccessListener { uri ->
                 Log.d("tag", "onSuccess: Uploaded Image URl is $uri")
+
                     postRef.child(idUser).child(postId).child("picturePost").setValue(uri.toString())
+
+
 
 
             }.addOnFailureListener {

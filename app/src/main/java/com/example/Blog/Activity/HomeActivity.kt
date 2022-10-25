@@ -9,10 +9,8 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
-import android.view.View
 import android.widget.EditText
 import androidx.annotation.RequiresApi
-import androidx.appcompat.app.AlertDialog
 import com.bumptech.glide.Glide
 import com.example.Blog.Adapters.PostAdapter
 import com.example.Blog.Dao.UserCallback
@@ -38,7 +36,7 @@ class HomeActivity : AppCompatActivity() {
     var listrev = ArrayList<PostItem>()
     var userDao = UserDao()
     private var post: PostItem? = null
-    private var uid:String? = null
+    private var uid: String? = null
     private var mContext: Context? = null
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -72,6 +70,10 @@ class HomeActivity : AppCompatActivity() {
             }
 
             override fun failurePost(error: DatabaseError) {
+
+            }
+
+            override fun pictureFound(postItem: PostItem) {
 
             }
 
@@ -115,6 +117,7 @@ class HomeActivity : AppCompatActivity() {
 
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == 0 && resultCode == AppCompatActivity.RESULT_OK && data != null) {
@@ -124,7 +127,9 @@ class HomeActivity : AppCompatActivity() {
             val picture = MediaStore.Images.Media.getBitmap(resolver, uri)
             val pictureDrawable = BitmapDrawable(picture)
             binding.imageButton.setBackgroundDrawable(pictureDrawable)
+
         }
+        uri = null
 
 
     }
@@ -148,26 +153,39 @@ class HomeActivity : AppCompatActivity() {
 
 
         })
-
         binding.postButton.setOnClickListener {
             if (verified()) {
                 post!!.datePost = currentDateTime.format(DateTimeFormatter.ISO_DATE)
                 post!!.hourPPost = currentDateTime.format(DateTimeFormatter.ISO_TIME)
                 post!!.contentPost = contentPost!!.text.toString()
                 post!!.idUser = userDao.getCurrentUserId()
-                //post!!.picturePost = uri.toString()
-                //if (uri != null) {
-                    //userDao.uploadImageToFirebase(userDao.getCurrentUserId().toString(), uri!!)
-               // }
 
                 contentPost!!.text.clear()
                 binding.imageButton.background = resources.getDrawable(R.drawable.upload)
 
-                userDao.sendPost(post!!,uri!!)
+                userDao.sendPost(post!!, object : PostCallback {
+                    override fun successPost(listPosts: ArrayList<PostItem>) {
+
+                    }
+
+                    override fun failurePost(error: DatabaseError) {
+
+                    }
+
+                    override fun pictureFound(postItem: PostItem) {
+                        if (uri !=  null){
+                            userDao.uploadImagePostToFirebase(postItem.idUser!!,postItem.id!!,uri!!)
+                        }
+
+                    }
+                })
+
+
             }
 
 
         }
+
         super.onResume()
     }
 

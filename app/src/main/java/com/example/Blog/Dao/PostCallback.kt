@@ -8,4 +8,5 @@ import java.lang.Error
 interface PostCallback {
     fun successPost(listPosts: ArrayList<PostItem>)
     fun failurePost(error: DatabaseError)
+    fun pictureFound(postItem:PostItem)
 }

@@ -110,8 +110,6 @@ class RegisterFragment : Fragment() {
                 user.mail = mail!!.text.toString()
                 user.password = password!!.text.toString()
                 user.confirmpassword = confirmPassword!!.text.toString()
-                //user.profilePhoto = uri.toString()
-
 
                 ////////////////////////////////DIALOG///////////////////////////////
                 val v = View.inflate(mContext, R.layout.progress_dialog, null)

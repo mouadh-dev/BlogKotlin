@@ -1,22 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    tools:context=".Fragments.LoginFragment">
+
 
     <LinearLayout
+        xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:padding="10sp"
+        android:gravity="center"
         android:orientation="vertical">
         <TextView
             android:id="@+id/loginText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Login"
+            android:text="@string/login"
             android:textColor="@color/black"
             android:textSize="50sp"
             android:layout_gravity="center"
@@ -26,7 +23,7 @@
             android:id="@+id/loginMail"
             android:layout_width="300dp"
             android:layout_height="60dp"
-            android:hint="Enter mail here"
+            android:hint="@string/enterMail"
             android:inputType="textEmailAddress"
             android:textColorHint="#888282"
             android:textSize="15sp"
@@ -35,7 +32,7 @@
             android:id="@+id/loginPassword"
             android:layout_width="300dp"
             android:layout_height="60dp"
-            android:hint="************"
+            android:hint="@string/password"
             android:textColorHint="#888282"
             android:textSize="15sp"
             android:inputType="textPassword"
@@ -44,17 +41,17 @@
             android:id="@+id/createAccountText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="you don't have an account ?"
-            android:layout_gravity="right"
+            android:text="@string/dontHaveAccount"
+            android:layout_gravity="end"
             android:textColor="@color/black"
             android:textSize="10sp"
             android:layout_marginTop="15sp"
-            />
+            tools:ignore="SmallSp" />
         <Button
             android:id="@+id/loginButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="LOGIN"
+            android:text="@string/loginButton"
             android:layout_gravity="center"
             android:padding="15sp"
             android:background="@color/black"
@@ -66,4 +63,3 @@
 
 
 
-</FrameLayout>

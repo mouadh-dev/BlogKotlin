@@ -10,8 +10,25 @@
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="title_activity_auth">Activity_Auth</string>
-    <string name="title_activity_login">login</string>
+    <string name="login">Login</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="post_button">POST</string>
     <string name="hint_post">feel free to express your opinion</string>
+    <string name="register">REGISTER</string>
+    <string name="gallery">GALLERY</string>
+    <string name="camera">CAMERA</string>
+
+    <string name="welcome">WELCOME</string>
+    <string name="createText">Create your Account</string>
+    <string name="fullName">Full name</string>
+    <string name="email">E-mail</string>
+    <string name="password">*************</string>
+    <string name="backLogin">Back to login</string>
+    <string name="saveButton">SAVE</string>
+    <string name="signOut">SIGN OUT</string>
+    <string name="enterMail">Enter mail here</string>
+    <string name="dontHaveAccount">you don\'t have an account ?</string>
+    <string name="loginButton">LOGIN</string>
+
+
 </resources>

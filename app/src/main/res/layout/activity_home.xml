@@ -19,12 +19,12 @@
             android:orientation="vertical"
             android:padding="10sp">
 
-            <ImageView
+            <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/profilePhotoIV"
                 android:layout_width="50sp"
                 android:layout_height="50sp"
                 android:layout_gravity="end"
-                android:background="@drawable/border_layout" />
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -99,8 +99,6 @@
         <RelativeLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent">
-
-            <!-- Note the 'centre in parent' tag below -->
 
             <ListView
                 android:id="@+id/listPost"

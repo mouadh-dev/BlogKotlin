@@ -13,14 +13,14 @@
         android:layout_gravity="center">
 
         <TextView
-            android:id="@+id/welcomText"
+            android:id="@+id/welcomeText"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="53dp"
             android:gravity="center"
-            android:text="Welcome"
-            android:textColor="@color/black"
+            android:text="@string/welcome"
+            android:textColor="@color/gray_blue"
             android:textSize="48sp" />
 
         <TextView
@@ -29,24 +29,48 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center"
-            android:text="Create your Account"
-            android:textColor="@color/black"
+            android:text="@string/createText"
+            android:textColor="@color/gray_blue"
             android:textSize="15sp"
 
             />
 
-        <Button
+        <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/registerPicture"
             android:layout_width="200dp"
             android:layout_height="200dp"
-            android:paddingHorizontal="30dp"
             android:layout_gravity="center"
-            android:text="Pick a picture"
             android:textColor="@color/white"
-            android:background="@color/black"
+            android:background="@drawable/circle_border"
             android:layout_marginTop="25dp"
             tools:ignore="SmallSp" />
-
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            >
+            <Button
+                android:id="@+id/galleryButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/gallery"
+                android:textColor="@color/white"
+                android:background="@color/gray_blue"
+                android:layout_marginEnd="10dp"
+                />
+            <Button
+                android:id="@+id/cameraButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="@string/camera"
+                android:textColor="@color/white"
+                android:background="@color/gray_blue"
+                android:layout_marginStart="10dp"
+                />
+        </LinearLayout>
         <EditText
             android:id="@+id/nameUserInscription"
             android:layout_width="233dp"
@@ -54,13 +78,14 @@
             android:layout_gravity="center"
             android:layout_marginTop="45dp"
             android:digits="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ "
-            android:hint="Full name"
+            android:hint="@string/fullName"
             android:paddingStart="20dp"
             android:paddingEnd="10dp"
             android:textColor="@color/black"
             android:textColorHint="#888282"
             android:textSize="15sp"
-            android:inputType="textPersonName"/>
+            android:inputType="textPersonName"
+            android:autofillHints="username" />
 
 
 
@@ -70,7 +95,7 @@
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:layout_marginTop="25dp"
-            android:hint="E-mail"
+            android:hint="@string/email"
             android:inputType="textEmailAddress"
             android:paddingStart="20dp"
             android:paddingEnd="10dp"
@@ -86,7 +111,7 @@
             android:layout_width="233dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
-            android:hint="*************"
+            android:hint="@string/password"
             android:inputType="textPassword"
             android:paddingStart="20dp"
             android:paddingEnd="10dp"
@@ -104,7 +129,7 @@
             android:layout_width="233dp"
             android:layout_height="40dp"
             android:layout_gravity="center"
-            android:hint="*************"
+            android:hint="@string/password"
             android:inputType="textPassword"
             android:paddingStart="20dp"
             android:paddingEnd="10dp"
@@ -117,12 +142,12 @@
     android:id="@+id/backToLogin"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="Back to login"
-    android:layout_gravity="right"
+    android:text="@string/backLogin"
+    android:layout_gravity="end"
     android:textColor="@color/black"
     android:textSize="10sp"
     android:layout_marginTop="15sp"
-    />
+    tools:ignore="SmallSp" />
 
 
 
@@ -134,9 +159,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:text="REGISTER"
+            android:text="@string/register"
             android:textColor="@color/white"
-            android:background="@color/black"
+            android:background="@color/gray_blue"
             android:layout_marginTop="25dp"
             tools:ignore="SmallSp" />
 

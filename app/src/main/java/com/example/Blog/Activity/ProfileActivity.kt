@@ -1,6 +1,8 @@
 package com.example.Blog.Activity
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
@@ -27,6 +29,7 @@ class ProfileActivity : AppCompatActivity() {
     private var uri: Uri? = null
     private var uid: String? = null
     private val userDao = UserDao()
+    private val REQUEST_IMAGE_CAPTURE = 1
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,7 +54,7 @@ class ProfileActivity : AppCompatActivity() {
             override fun onSuccess(userItem: UserItem) {
                 name!!.setText(userItem.fullname)
                 mail!!.setText(userItem.mail)
-                Log.println(Log.ASSERT, "picture", userItem.profilePhoto!!)
+               // Log.println(Log.ASSERT, "picture", userItem.profilePhoto!!)
                 Glide.with(this@ProfileActivity).load(userItem.profilePhoto)
                     .into(binding.updateProfilePicture)
                 passwordText = userItem.password
@@ -77,7 +80,13 @@ class ProfileActivity : AppCompatActivity() {
         }
 
     }
-
+    private fun dispatchTakePictureIntent() {
+        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        try {
+            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+        } catch (e: ActivityNotFoundException) {
+            // display error state to the user
+        }}
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         val resolver = applicationContext.contentResolver
@@ -89,6 +98,7 @@ class ProfileActivity : AppCompatActivity() {
             val pictureDrawable = BitmapDrawable(picture)
 
             binding.updateProfilePicture.setBackgroundDrawable(pictureDrawable)
+
         }
         val uid = userDao.getCurrentUserId()
         val user = UserItem()
@@ -146,14 +156,7 @@ class ProfileActivity : AppCompatActivity() {
             return false
         }
         /////////PASSWORD
-        if (password!!.text.length < 6 && password!!.text.toString() != "") {
-            password!!.error = "Password Length must be more than " + 6 + "characters"
-            return false
-        }
-        if (password!!.text.toString() != confirmPassword!!.text.toString()) {
-            confirmPassword!!.error = "Password does not match"
-            return false
-        }
+
         return true
     }
 }

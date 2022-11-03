@@ -154,10 +154,10 @@ class RegisterFragment : Fragment() {
 
     private fun validateInput(): Boolean {
         /////////PICTURE
-        if(binding.registerPicture.background === null){
-            binding.registerPicture.error = "Please pick a picture"
-            return false
-        }
+        //if(binding.registerPicture.background === null){
+          //  binding.registerPicture.error = "Please pick a picture"
+            //return false
+        //}
         /////////FULL NAME
         if (fullName!!.text.toString() == "") {
             fullName!!.error = "Please Enter Name"

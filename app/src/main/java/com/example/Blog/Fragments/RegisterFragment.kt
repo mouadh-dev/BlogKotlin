@@ -1,13 +1,15 @@
 package com.example.Blog.Fragments
 
+import android.annotation.SuppressLint
 import android.app.Activity
-import android.app.Dialog
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.util.Base64
 import android.util.Log
 import android.util.Log.println
 import android.util.Patterns
@@ -15,6 +17,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
+import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.example.Blog.Dao.SignUpCallback
 import com.example.Blog.Dao.UserDao
@@ -22,10 +27,8 @@ import com.example.Blog.Entity.UserItem
 import com.example.Blog.R
 import com.example.Blog.databinding.FragmentRegisterBinding
 import com.example.Blog.databinding.FragmentRegisterBinding.inflate
-import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
-import android.content.Context
 import com.google.firebase.auth.FirebaseAuth
+import java.io.ByteArrayOutputStream
 
 
 class RegisterFragment : Fragment() {
@@ -36,6 +39,7 @@ class RegisterFragment : Fragment() {
     private var password: EditText? = null
     private var confirmPassword: EditText? = null
     private var uri: Uri? = null
+    private var imageEncoded: ByteArray? = null
     private var mContext: Context? = null
     private val mAuth = FirebaseAuth.getInstance()
 
@@ -78,27 +82,43 @@ class RegisterFragment : Fragment() {
                 .replace(R.id.frameLayout, loginFragment).commit()
         }
 
-        binding.registerPicture.setOnClickListener {
+        binding.galleryButton.setOnClickListener {
             println(Log.ASSERT,"selected","showing selected photo")
             val intent = Intent(Intent.ACTION_PICK)
             intent.type= "image/*"
             startActivityForResult(intent, 0    )
         }
+        binding.cameraButton.setOnClickListener {
+            println(Log.ASSERT,"selected","showing selected photo")
+            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            startActivityForResult(cameraIntent, 200)
+        }
 
 
     }
 
+    @SuppressLint("LongLogTag")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 0 && resultCode == AppCompatActivity.RESULT_OK && data != null){
-            Log.d("Register activity", "Photo was selected successfully")
+        if (resultCode == AppCompatActivity.RESULT_OK && data != null && requestCode == 0   ){
+            Log.d("Photo was selected successfully",data.data.toString())
             uri = data.data
             val resolver = requireActivity().contentResolver
             val picture = MediaStore.Images.Media.getBitmap(resolver,uri)
             val pictureDrawable = BitmapDrawable(picture)
             binding.registerPicture.setBackgroundDrawable(pictureDrawable)
         }
+        if (resultCode == Activity.RESULT_OK && requestCode == 200 && data != null){
 
+            val imageBitmap = data.extras?.get("data") as Bitmap
+            val baos = ByteArrayOutputStream()
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+            imageEncoded = baos.toByteArray()
+            //uri = baos.toByteArray()
+            Log.d("Photo was selected successfully",baos.toByteArray().toString())
+            binding.registerPicture.setImageBitmap(data.extras!!.get("data") as Bitmap)
+
+        }
 
 
         /////sign up function
@@ -124,7 +144,12 @@ class RegisterFragment : Fragment() {
                 val loginFragment = LoginFragment()
                 userDao.signUpUser(requireActivity() as AppCompatActivity,user,object:SignUpCallback{
                     override fun success() {
-                        userDao.uploadImageToFirebase(mAuth.currentUser!!.uid,uri!!)
+                        if (uri != null){
+                            userDao.uploadImageToFirebase(mAuth.currentUser!!.uid,uri!!)
+                        }else if (imageEncoded != null){
+                            userDao.uploadImageToFirebaseFromCamera(mAuth.currentUser!!.uid,imageEncoded!!)
+                        }
+
                         progressdialog.dismiss()
                         requireFragmentManager().beginTransaction()
                             .replace(R.id.frameLayout, loginFragment).commit()

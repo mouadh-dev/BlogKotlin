@@ -81,7 +81,19 @@ class UserDao : GestionUser {
             }
         }
     }
+    fun uploadImageToFirebaseFromCamera(uid: String, imageEncoded: ByteArray) {
+        val fileName = UUID.randomUUID().toString() + ".jpg"
+        val image = storageReference.child("pictures/$fileName")
+        image.putBytes(imageEncoded).addOnSuccessListener {
+            image.downloadUrl.addOnSuccessListener { uri ->
+                Log.d("tag", "onSuccess: Uploaded Image URl is $uri")
+                userRef.child(uid).child("profilePhoto").setValue(uri.toString())
 
+            }.addOnFailureListener {
+                Log.d("tag", "onFailureMessage is $it")
+            }
+        }
+    }
     ///////////////////////////////////////////Sign in//////////////////////////////////////////////////
     fun signIn(activity: AppCompatActivity, userItem: UserItem, userCallback: UserCallback) {
         mAuth.signInWithEmailAndPassword(userItem.mail, userItem.password)

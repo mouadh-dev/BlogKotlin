@@ -1,5 +1,7 @@
 package com.example.Blog.Activity
 
+import android.annotation.SuppressLint
+import android.app.Activity
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.graphics.Bitmap
@@ -17,6 +19,7 @@ import com.example.Blog.Dao.UserDao
 import com.example.Blog.Entity.UserItem
 import com.example.Blog.databinding.ActivityProfileBinding
 import com.squareup.picasso.Picasso
+import java.io.ByteArrayOutputStream
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -29,7 +32,8 @@ class ProfileActivity : AppCompatActivity() {
     private var uri: Uri? = null
     private var uid: String? = null
     private val userDao = UserDao()
-    private val REQUEST_IMAGE_CAPTURE = 1
+    private var imageEncoded: ByteArray? = null
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -64,11 +68,16 @@ class ProfileActivity : AppCompatActivity() {
             }
         })
 
-        binding.updateProfilePicture.setOnClickListener {
+        binding.profileGalleryButton.setOnClickListener {
             Log.println(Log.ASSERT, "selected", "showing selected photo")
             val intent = Intent(Intent.ACTION_PICK)
             intent.type = "image/*"
             startActivityForResult(intent, 0)
+        }
+        binding.profileCameraButton.setOnClickListener {
+            Log.println(Log.ASSERT, "selected", "showing selected photo")
+            val cameraIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+            startActivityForResult(cameraIntent, 200)
         }
 
         ////////////////////////////////////////SIGNOUT///////////////////////////::
@@ -80,13 +89,8 @@ class ProfileActivity : AppCompatActivity() {
         }
 
     }
-    private fun dispatchTakePictureIntent() {
-        val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        try {
-            startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-        } catch (e: ActivityNotFoundException) {
-            // display error state to the user
-        }}
+
+    @SuppressLint("LongLogTag")
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         val resolver = applicationContext.contentResolver
@@ -98,6 +102,17 @@ class ProfileActivity : AppCompatActivity() {
             val pictureDrawable = BitmapDrawable(picture)
 
             binding.updateProfilePicture.setBackgroundDrawable(pictureDrawable)
+
+        }
+        if (resultCode == Activity.RESULT_OK && requestCode == 200 && data != null){
+
+            val imageBitmap = data.extras?.get("data") as Bitmap
+            val baos = ByteArrayOutputStream()
+            imageBitmap.compress(Bitmap.CompressFormat.JPEG, 100, baos)
+            imageEncoded = baos.toByteArray()
+            //uri = baos.toByteArray()
+            Log.d("Photo was selected successfully",baos.toByteArray().toString())
+            binding.updateProfilePicture.setImageBitmap(data.extras!!.get("data") as Bitmap)
 
         }
         val uid = userDao.getCurrentUserId()
@@ -117,7 +132,11 @@ class ProfileActivity : AppCompatActivity() {
 
                 userDao.updateUser(uid, user, object : UserCallback {
                     override fun onSuccess(userItem: UserItem) {
-                        userDao.uploadImageToFirebase(uid, uri!!)
+                        if (uri != null){
+                            userDao.uploadImageToFirebase(uid,uri!!)
+                        }else if (imageEncoded != null){
+                            userDao.uploadImageToFirebaseFromCamera(uid,imageEncoded!!)
+                        }
                         Log.println(Log.ASSERT, "mouadh", user.toString())
                         finish()
                     }
